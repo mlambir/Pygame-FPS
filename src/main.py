@@ -101,7 +101,7 @@ def load_image(image, darken, colorKey = None):
 
 def main():
   
-    t = time.clock() #time of current frame
+    #t = time.time() #time of current frame
     oldTime = 0. #time of previous frame
     
     size = w, h = 640,480
@@ -139,7 +139,7 @@ def main():
         # timing for input and FPS counter
         
         frameTime = float(clock.get_time()) / 1000.0 # frameTime is the time this frame has taken, in seconds
-        t = time.clock()
+        t = time.perf_counter()
         text = f.render(str(clock.get_fps()), False, (255, 255, 0))
         screen.blit(text, text.get_rect(), text.get_rect())
         weapon.draw(screen, t)
