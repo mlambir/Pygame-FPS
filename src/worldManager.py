@@ -4,6 +4,24 @@ import math
     
 texWidth = 64
 texHeight = 64
+def cmp_to_key(mycmp):
+    'Convert a cmp= function into a key= function'
+    class K:
+        def __init__(self, obj, *args):
+            self.obj = obj
+        def __lt__(self, other):
+            return mycmp(self.obj, other.obj) < 0
+        def __gt__(self, other):
+            return mycmp(self.obj, other.obj) > 0
+        def __eq__(self, other):
+            return mycmp(self.obj, other.obj) == 0
+        def __le__(self, other):
+            return mycmp(self.obj, other.obj) <= 0
+        def __ge__(self, other):
+            return mycmp(self.obj, other.obj) >= 0
+        def __ne__(self, other):
+            return mycmp(self.obj, other.obj) != 0
+    return K
 class WorldManager(object):
 
     def __init__(self,worldMap,sprite_positions,x,y,dirx,diry,planex,planey):
@@ -157,7 +175,7 @@ class WorldManager(object):
                 return 1
         #draw sprites
         
-        self.sprite_positions.sort(sprite_compare)
+        self.sprite_positions.sort(key= cmp_to_key(sprite_compare))
         for sprite in self.sprite_positions:
             #translate sprite position to relative to camera
             spriteX = sprite[0] - self.camera.x;
@@ -183,12 +201,12 @@ class WorldManager(object):
           
             #calculate width of the sprite
             spriteWidth = abs( int (h / (transformY)))
-            drawStartX = -spriteWidth / 2 + spritesurfaceX
-            drawEndX = spriteWidth / 2 + spritesurfaceX
+            drawStartX = int(-spriteWidth / 2 + spritesurfaceX)
+            drawEndX = int(spriteWidth / 2 + spritesurfaceX)
             
             if spriteHeight < 1000:
                 for stripe in range(drawStartX, drawEndX):
-                    texX = int(256 * (stripe - (-spriteWidth / 2 + spritesurfaceX)) * texWidth / spriteWidth) / 256
+                    texX = int(256 * (stripe - (-spriteWidth / 2 + spritesurfaceX)) * texWidth / spriteWidth / 256)
                     #the conditions in the if are:
                     ##1) it's in front of camera plane so you don't see things behind you
                     ##2) it's on the surface (left)
