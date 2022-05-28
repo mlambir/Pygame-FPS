@@ -8,30 +8,30 @@ class WorldManager(object):
 
     def __init__(self,worldMap,sprite_positions,x,y,dirx,diry,planex,planey):
         self.sprites = [  
-              load_image(pygame.image.load("pics/items/barrel.png").convert(), False, colorKey = (0,0,0)),
-              load_image(pygame.image.load("pics/items/pillar.png").convert(), False, colorKey = (0,0,0)),
-              load_image(pygame.image.load("pics/items/greenlight.png").convert(), False, colorKey = (0,0,0)),
+              load_image(pygame.image.load("resources/items/barrel.png").convert(), False, colorKey = (0,0,0)),
+              load_image(pygame.image.load("resources/items/pillar.png").convert(), False, colorKey = (0,0,0)),
+              load_image(pygame.image.load("resources/items/greenlight.png").convert(), False, colorKey = (0,0,0)),
         ]
         
         self.background = None
         self.images = [  
-              load_image(pygame.image.load("pics/walls/eagle.png").convert(), False),
-              load_image(pygame.image.load("pics/walls/redbrick.png").convert(), False),
-              load_image(pygame.image.load("pics/walls/purplestone.png").convert(), False),
-              load_image(pygame.image.load("pics/walls/greystone.png").convert(), False),
-              load_image(pygame.image.load("pics/walls/bluestone.png").convert(), False),
-              load_image(pygame.image.load("pics/walls/mossy.png").convert(), False),
-              load_image(pygame.image.load("pics/walls/wood.png").convert(), False),
-              load_image(pygame.image.load("pics/walls/colorstone.png").convert(), False),
+              load_image(pygame.image.load("resources/walls/eagle.png").convert(), False),
+              load_image(pygame.image.load("resources/walls/redbrick.png").convert(), False),
+              load_image(pygame.image.load("resources/walls/purplestone.png").convert(), False),
+              load_image(pygame.image.load("resources/walls/greystone.png").convert(), False),
+              load_image(pygame.image.load("resources/walls/bluestone.png").convert(), False),
+              load_image(pygame.image.load("resources/walls/mossy.png").convert(), False),
+              load_image(pygame.image.load("resources/walls/wood.png").convert(), False),
+              load_image(pygame.image.load("resources/walls/colorstone.png").convert(), False),
     
-              load_image(pygame.image.load("pics/walls/eagle.png").convert(), True),
-              load_image(pygame.image.load("pics/walls/redbrick.png").convert(), True),
-              load_image(pygame.image.load("pics/walls/purplestone.png").convert(), True),
-              load_image(pygame.image.load("pics/walls/greystone.png").convert(), True),
-              load_image(pygame.image.load("pics/walls/bluestone.png").convert(), True),
-              load_image(pygame.image.load("pics/walls/mossy.png").convert(), True),
-              load_image(pygame.image.load("pics/walls/wood.png").convert(), True),
-              load_image(pygame.image.load("pics/walls/colorstone.png").convert(), True),
+              load_image(pygame.image.load("resources/walls/eagle.png").convert(), True),
+              load_image(pygame.image.load("resources/walls/redbrick.png").convert(), True),
+              load_image(pygame.image.load("resources/walls/purplestone.png").convert(), True),
+              load_image(pygame.image.load("resources/walls/greystone.png").convert(), True),
+              load_image(pygame.image.load("resources/walls/bluestone.png").convert(), True),
+              load_image(pygame.image.load("resources/walls/mossy.png").convert(), True),
+              load_image(pygame.image.load("resources/walls/wood.png").convert(), True),
+              load_image(pygame.image.load("resources/walls/colorstone.png").convert(), True),
               ]
         self.camera = Camera(x,y,dirx,diry,planex,planey)
         self.worldMap = worldMap
@@ -41,7 +41,7 @@ class WorldManager(object):
         h = surface.get_height()
         #draw background
         if self.background is None:
-            self.background = pygame.transform.scale(pygame.image.load("pics/background.png").convert(), (w,h))
+            self.background = pygame.transform.scale(pygame.image.load("resources/background.png").convert(), (w,h))
         surface.blit(self.background, (0,0))
         zBuffer = []
         for x in range(w):
@@ -145,19 +145,11 @@ class WorldManager(object):
             zBuffer.append(perpWallDist)
 
         #function to sort sprites
-        def sprite_compare(s1, s2):
+        def sprite_sort_key(s):
             import math
-            s1Dist = math.sqrt((s1[0] -self.camera.x) ** 2 + (s1[1] -self.camera.y) ** 2)
-            s2Dist = math.sqrt((s2[0] -self.camera.x) ** 2 + (s2[1] -self.camera.y) ** 2)  
-            if s1Dist>s2Dist:
-                return -1
-            elif s1Dist==s2Dist:
-                return 0
-            else:
-                return 1
-        #draw sprites
+            return math.sqrt((s[0] -self.camera.x) ** 2 + (s[1] -self.camera.y) ** 2)
         
-        self.sprite_positions.sort(sprite_compare)
+        self.sprite_positions.sort(key=sprite_sort_key, reverse=True)
         for sprite in self.sprite_positions:
             #translate sprite position to relative to camera
             spriteX = sprite[0] - self.camera.x;
@@ -187,8 +179,8 @@ class WorldManager(object):
             drawEndX = spriteWidth / 2 + spritesurfaceX
             
             if spriteHeight < 1000:
-                for stripe in range(drawStartX, drawEndX):
-                    texX = int(256 * (stripe - (-spriteWidth / 2 + spritesurfaceX)) * texWidth / spriteWidth) / 256
+                for stripe in range(int(round(drawStartX)), int(round(drawEndX))):
+                    texX = int((256 * (stripe - (-spriteWidth / 2 + spritesurfaceX)) * texWidth / spriteWidth) / 256)
                     #the conditions in the if are:
                     ##1) it's in front of camera plane so you don't see things behind you
                     ##2) it's on the surface (left)

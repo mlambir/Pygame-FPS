@@ -101,7 +101,7 @@ def load_image(image, darken, colorKey = None):
 
 def main():
   
-    t = time.clock() #time of current frame
+    clock = pygame.time.Clock()
     oldTime = 0. #time of previous frame
     
     size = w, h = 640,480
@@ -111,7 +111,6 @@ def main():
     screen = pygame.display.get_surface()
     #pixScreen = pygame.surfarray.pixels2d(screen)
     pygame.mouse.set_visible(False)
-    clock = pygame.time.Clock()
     
     f = pygame.font.SysFont(pygame.font.get_default_font(), 20)
     
@@ -129,6 +128,7 @@ def main():
                ]
     weapon_numbers = [K_1,K_2,K_3,K_4,K_5,K_6,K_7,K_8,K_0]
     weapon = weapons[0]
+    t = 0
     
     while(True):
         clock.tick(60)
@@ -139,7 +139,7 @@ def main():
         # timing for input and FPS counter
         
         frameTime = float(clock.get_time()) / 1000.0 # frameTime is the time this frame has taken, in seconds
-        t = time.clock()
+        t+=frameTime
         text = f.render(str(clock.get_fps()), False, (255, 255, 0))
         screen.blit(text, text.get_rect(), text.get_rect())
         weapon.draw(screen, t)
@@ -207,7 +207,7 @@ class Weapon(object):
         self.frame = 0
         self.oldTime = 0
         for i in range(frameCount):
-            img = pygame.image.load("pics/weapons/%s%s.bmp" % (weaponName, i+1)).convert()
+            img = pygame.image.load("resources/weapons/%s%s.bmp" % (weaponName, i+1)).convert()
             img = pygame.transform.scale2x(img)
             img = pygame.transform.scale2x(img)
             img.set_colorkey(img.get_at((0,0)))
